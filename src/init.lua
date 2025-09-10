@@ -6,6 +6,9 @@ encoding = require('encoding');
 encoding.default = 'CP1251';
 u8 = encoding.UTF8;
 
+Effil = require('effil');
+Requests = require('requests');
+
 FaIcons = require('fAwesome6');
 require('net');
 require('moonloader');
@@ -15,7 +18,7 @@ require('hook');
 require('inventory');
 require('utils.bitstream');
 require('utils.helpers');
-require('ui.window');
+require('ui.main');
 
 
 -- error('')

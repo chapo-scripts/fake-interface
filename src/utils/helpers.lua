@@ -49,12 +49,9 @@ function debug.log(...)
     print(('%s: %s'):format(table.concat(trace, '->'), table.concat(args, '\t')));
 end
 
-local effil = require 'effil' -- В начало скрипта
-
 function AsyncHttpRequest(method, url, args, resolve, reject)
-   local request_thread = effil.thread(function (method, url, args)
-      local requests = require 'requests'
-      local result, response = pcall(requests.request, method, url, args)
+   local request_thread = Effil.thread(function (method, url, args)
+      local result, response = pcall(Requests.request, method, url, args)
       if result then
          response.json, response.xml = nil, nil
          return true, response
