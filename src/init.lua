@@ -9,6 +9,7 @@ u8 = encoding.UTF8;
 Effil = require('effil');
 Requests = require('requests');
 
+SampEvents = require('samp.events');
 FaIcons = require('fAwesome6');
 require('net');
 require('moonloader');
@@ -16,6 +17,7 @@ require('constants');
 require('config');
 require('hook');
 require('inventory');
+require('storage');
 require('utils.bitstream');
 require('utils.helpers');
 require('ui.main');
@@ -26,6 +28,7 @@ function init()
     Net:init();
     Hook:init();
     Inventory:init();
+    Storage:init();
     UI:init();
 end
 

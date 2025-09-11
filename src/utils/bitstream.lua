@@ -77,3 +77,9 @@ function CEF:emulate(code, encode)
     raknetEmulPacketReceiveBitStream(220, bs);
     raknetDeleteBitStream(bs);
 end
+
+---@param event string
+---@param payload table?
+function CEF:emulateEvent(event, payload)
+    self:emulate(([[window.executeEvent('%s', `%s`);]]):format(event, payload and ('[%s]'):format(encodeJson(payload)) or 'null'), false);
+end

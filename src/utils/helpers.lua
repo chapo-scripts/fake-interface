@@ -49,6 +49,18 @@ function debug.log(...)
     print(('%s: %s'):format(table.concat(trace, '->'), table.concat(args, '\t')));
 end
 
+function table.copy(t)
+   if (type(t) ~= 'table') then
+      return nil;
+   end
+   local t2 = {};
+   for k,v in pairs(t) do
+      t2[k] = v;
+   end
+   return t2;
+end
+
+
 function AsyncHttpRequest(method, url, args, resolve, reject)
    local request_thread = Effil.thread(function (method, url, args)
       local result, response = pcall(Requests.request, method, url, args)

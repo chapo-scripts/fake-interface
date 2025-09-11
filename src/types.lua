@@ -1,0 +1,14 @@
+---@meta
+
+---@class Item
+---@field slot number
+---@field item number
+---@field amount number
+---@field text string
+---@field background number
+---@field enchant number
+---@field color number
+---@field strength number
+---@field available number
+---@field blackout number
+---@field time number

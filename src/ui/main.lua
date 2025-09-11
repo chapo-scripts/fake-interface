@@ -10,14 +10,20 @@ UI = {
     Components = {
         ClickableText = require('ui.components.clickable-text'),
         ClickableTextDL = require('ui.components.clickable-text-dl'),
-        Hint = require('ui.components.hint')
-    },
-    Frame = {
-        Main = require('ui.frame')
+        Hint = require('ui.components.hint'),
+        Tab = require('ui.components.tab')
     },
     enchantsList = { u8'Нет' },
     enchantsListStr = '\0'
 };
+
+TEXT_BUTTON_COLOR = {
+    red = { default = imgui.ImVec4(1, 0, 0, 1), hovered = imgui.ImVec4(1, 0, 0, 0.7) },
+    green = { default = imgui.ImVec4(0, 1, 0, 1), hovered = imgui.ImVec4(0, 1, 0, 0.7) }
+};
+
+
+local mainFrame = require('ui.frame');
 
 function UI:init()
     for i = 1, 12 do
@@ -32,6 +38,7 @@ function UI:init()
     end);
     sampRegisterChatCommand('fakecef', function()
         self.menu[0] = not self.menu[0];
+        UI.resetIO();
     end);
     
     imgui.OnInitialize(function()
@@ -55,7 +62,20 @@ function UI:init()
     imgui.OnFrame(
         function() return UI.menu[0] end,
         function(frame)
-            UI.Frame.Main(frame);
+            mainFrame(frame);
         end
     );
+end
+
+function UI.resetIO()
+    for i = 0, 511 do
+        imgui.GetIO().KeysDown[i] = false
+    end
+    for i = 0, 4 do
+        imgui.GetIO().MouseDown[i] = false
+    end
+    imgui.GetIO().KeyCtrl = false
+    imgui.GetIO().KeyShift = false
+    imgui.GetIO().KeyAlt = false
+    imgui.GetIO().KeySuper = false
 end

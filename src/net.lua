@@ -17,21 +17,21 @@ Net = {
 };
 
 function Net:init()
-    AsyncHttpRequest(
-        'GET',
-        'https://items.shinoa.tech/items.php',
-        nil,
-        function(response)
-            if (response.status_code ~= 200) then
-                return Msg('Ошибка, невозможно загрузить список предметов: ' .. response.status_code);
-            end
-            self.items = decodeJson(response.text);
-            self.listLoaded = true;
-        end,
-        function(err)
-            Msg('Ошибка: ', tostring(err));
-        end
-    );
+    -- AsyncHttpRequest(
+    --     'GET',
+    --     'https://items.shinoa.tech/items.php',
+    --     nil,
+    --     function(response)
+    --         if (response.status_code ~= 200) then
+    --             return Msg('Ошибка, невозможно загрузить список предметов: ' .. response.status_code);
+    --         end
+    --         self.items = decodeJson(response.text);
+    --         self.listLoaded = true;
+    --     end,
+    --     function(err)
+    --         Msg('Ошибка: ', tostring(err));
+    --     end
+    -- );
     --https://items.shinoa.tech/items.php
 end
 
@@ -39,7 +39,9 @@ end
 ---@return ItemInfo | nil
 function Net:getItemInfo(itemId)
     if (not self.listLoaded) then
-        return nil;
+        return {
+            item_name = 'NOT_LOADED'
+        };
     end
     local itemId = type(itemId) == 'number' and tostring(itemId) or itemId;
     assert(itemId);

@@ -1,35 +1,25 @@
----@class InventorySlotItem
----@field slot number
----@field item number
----@field amount number
----@field unic_id number
----@field unic_id_2 number
----@field unic_id_3 number
----@field text string
----@field enchant number
----@field available number
----@field blackout number
----@field time number
----@field strength number
----@field background number
-
----@class Item
----@field slot number
----@field item number
----@field amount number
----@field text string
----@field background number
----@field enchant number
----@field color number
----@field strength number
----@field available number
----@field blackout number
----@field time number
-
+INVENTORY_RESTORE_STATE = {
+    NONE = 0,
+    WAIT_FOR_MAIN_MENU = 1,
+    WAIT_FOR_PERSONAL_SETTINGS = 2,
+    WAIT_FOR_INTERFACE_SETTINGS = 3,
+    WAIT_FOR_INVENTORY_SETTINGS = 4,
+    WAIT_FOR_INVENTORY_SECOND_CLICK = 5,
+    CLOSE_ANY_DIALOG = 99
+};
 
 Inventory = {
-    slots = {}
+    slots = {},
+    restoreData = {
+        state = INVENTORY_RESTORE_STATE.WAIT_FOR_MAIN_MENU
+    }
 };
+
+function Inventory.restoreData.setState(state)
+    local oldState = Inventory.restoreData.state;
+    Inventory.restoreData.state = state;
+    Msg(('Restoring interface (%d/%d)'):format(oldState, state));
+end
 
 ---@param id number
 function Inventory:setSkin(id)
@@ -72,37 +62,17 @@ end
 
 ---@param item Item
 function Inventory:setItem(item)
-    --[[
-        window.executeEvent('event.inventory.playerInventory', `[{"action":2,"data":{"type":1,"items":[{"slot":41,"item":8733,"amount":1,"text":"","background":1097458175,"enchant":0,"color":0,"strength":100,"available":1,"blackout":0,"time":0}]}}]`)
-        ====
-        window.executeEvent('event.inventory.playerInventory', `[{"action":2,"data":{"type":1,"items":[{"slot":0,"item":8463,"amount":1,"text":"TUNING","background":927365375,"available":1,"blackout":0,"time":0}]}}]`);
-        window.executeEvent('event.inventory.playerInventory', `[{"action":2,"data":{"type":1,"items":[{"slot":23,"item":8681,"amount":1,"text":"","background":-1248120833,"enchant":0,"color":0,"strength":100,"available":1,"blackout":0,"time":0}]}}]`);
-    ]]
-    -- local data = {
-    --     action = 2,
-    --     data = {
-    --         type = 1,
-    --         items = {
-    --             item
-    --         }
-    --     }
-    -- };
-    -- CEF:emulate(([[window.executeEvent('event.inventory.playerInventory', `[%s]`);]]):format(encodeJson(data)), false);
-    -- if (item.amount > 0) then
-        
-    -- end
-    -- if (item.enchant > 0) then
-    --     item.text = UI.enchantsList[item.enchant]
-    -- end
     self:setItems({item});
 end
 
+local ITEM_DATA_TYPE_SET_STORAGE = 25;
+
 ---@param items Item[]
-function Inventory:setItems(items)
+function Inventory:setItems(items, type)
      local data = {
         action = 2,
         data = {
-            type = 1,
+            type = type or 1,
             items = items
         }
     };

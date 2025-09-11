@@ -34,6 +34,7 @@ GlobalConfig = {
         {
             name = 'default',
             inventory = { slots = {} },
+            storage = { slots = {} },
             house = { slots = {} },
             hotel = { slots = {} },
             trunk = { slots = {} }
@@ -41,7 +42,15 @@ GlobalConfig = {
     }
 };
 
-Config = GlobalConfig.configs.default;
+Config = {
+    inventory = {
+        enabled = true,
+        slots = {}
+    },
+    storage = {
+        slots = {}
+    }
+}
 
 ---@param name string
 ---@return Config | nil cfg
