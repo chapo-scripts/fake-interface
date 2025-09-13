@@ -76,6 +76,7 @@ function CEF:emulate(code, encode)
     raknetBitStreamWriteString(bs, code);
     raknetEmulPacketReceiveBitStream(220, bs);
     raknetDeleteBitStream(bs);
+    print('[CEF-EMULATED]', code);
 end
 
 ---@param event string

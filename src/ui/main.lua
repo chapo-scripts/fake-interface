@@ -5,7 +5,8 @@ UI = {
         slot = imgui.new.int(0)
     },
     Popups = {
-        Config = require('ui.popups.config')
+        Config = require('ui.popups.config'),
+        ItemsList = require('ui.popups.items-list')
     },
     Components = {
         ClickableText = require('ui.components.clickable-text'),

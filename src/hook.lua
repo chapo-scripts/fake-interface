@@ -75,38 +75,26 @@ function Hook:init()
         local status, event, data, json, packetString = CEF:readIncomingPacket(id, bs, true);
         if (status) then
             print(event)
-            if (event == PATTERN.EVENT_INVENTORY) then
-                --[[
-                    window.executeEvent('event.inventory.playerInventory', `[{"action":1,"data":{"skin":{"model":78,"background":-1},"buttons":1}}]`);
-                ]]
-                
-                -- if (data.action == 1) then
-                --     -- Set big skin image
-                --     data.data.skin.model = 49;
-                --     CEF:emulate(([[window.executeEvent('event.inventory.playerInventory', `[%s]`);]]):format(encodeJson(data)), false);
-                -- elseif (data.action == 2) then
-                --     Msg('event 2')
-                --     -- Change skin in slot
-                --     ---@type SkinSlot
-                    
-                --     -- print(encodeJson(data.data.items[1]))
-                --     -- print(data.data.items[0].text)
-                --     -- data.data.items[1].text = 'TEST';
-                --     -- NOT ONLY SKIN!
-                --     CEF:emulate(([[window.executeEvent('event.inventory.playerInventory', `[%s]`);]]):format(encodeJson(data)), false);
-                -- end
-
-                --[[
-                    window.executeEvent('event.inventory.playerInventory', `[{"action":2,"data":{"type":22,"items":[{"slot":0,"item":269,"amount":1,"unic_id":0,"unic_id_2":0,"unic_id_3":0,"text":"ID:78","enchant":0,"available":1,"blackout":0,"time":0}]}}]`);
-                ]]
-            end
             if (Config.inventory.enabled and event == 'inventory.updateCharacterTab') then
-                Inventory:clearAll();
-                Inventory:addItemsFromConfig();
-                if (data == 'warehouse') then
-                    Storage:clearAll();
-                    Storage:addItemsFromConfig();
+                -- Inventory:clearAll();
+                -- Inventory:addItemsFromConfig();
+                
+                for _, interface in pairs(INTERFACE_TYPE) do
+                    SlotInterface:clearAll(interface);
+                    SlotInterface:addItemsFromConfig(interface);
                 end
+
+                -- SlotInterface:clearAll(INTERFACE_TYPE.INVENTORY);
+                -- SlotInterface:addItemsFromConfig(INTERFACE_TYPE.INVENTORY);
+                -- if (data == 'warehouse') then
+                --     -- Storage:clearAll();
+                --     -- Storage:addItemsFromConfig();
+                --     SlotInterface:clearAll(INTERFACE_TYPE.STORAGE);
+                --     SlotInterface:addItemsFromConfig(INTERFACE_TYPE.STORAGE);
+
+                --     SlotInterface:clearAll(INTERFACE_TYPE.HOTEL);
+                --     SlotInterface:addItemsFromConfig(INTERFACE_TYPE.HOTEL);
+                -- end
             end
         end
     end);
@@ -119,28 +107,29 @@ function Hook:init()
                     local jsonPayload = str:match(PATTERN.MOVE_ITEM);
                     local moveData = decodeJson(jsonPayload);
                     if (moveData) then
-                        local fromSlot, toSlot = moveData.from.slot, moveData.to.slot;
-                        local source = {
-                            from = MOVE_SOURCE_NUMBER[moveData.from.type],
-                            to = MOVE_SOURCE_NUMBER[moveData.to.type]
-                        };
-                        Msg('item moved from', source.from, 'to', source.to, '|', moveData.from.slot, 'to', moveData.to.slot);
+                        SlotInterface:handleItemMove(moveData.from, moveData.to);
+                        -- local fromSlot, toSlot = moveData.from.slot, moveData.to.slot;
+                        -- local source = {
+                        --     from = MOVE_SOURCE_NUMBER[moveData.from.type],
+                        --     to = MOVE_SOURCE_NUMBER[moveData.to.type]
+                        -- };
+                        -- Msg('item moved from', source.from, 'to', source.to, '|', moveData.from.slot, 'to', moveData.to.slot);
 
                        
-                        local firstItem, secondItem = Config[source.from].slots[fromSlot], Config[source.to].slots[toSlot];
-                        Config[source.to].slots[toSlot], Config[source.from].slots[fromSlot] = firstItem, secondItem;
-                        if (Config[source.to].slots[toSlot]) then
-                            Config[source.to].slots[toSlot].slot[0] = toSlot;
-                        end
-                        if (Config[source.from].slots[fromSlot]) then
-                            Config[source.from].slots[fromSlot].slot[0] = fromSlot;
-                        end
+                        -- local firstItem, secondItem = Config[source.from].slots[fromSlot], Config[source.to].slots[toSlot];
+                        -- Config[source.to].slots[toSlot], Config[source.from].slots[fromSlot] = firstItem, secondItem;
+                        -- if (Config[source.to].slots[toSlot]) then
+                        --     Config[source.to].slots[toSlot].slot[0] = toSlot;
+                        -- end
+                        -- if (Config[source.from].slots[fromSlot]) then
+                        --     Config[source.from].slots[fromSlot].slot[0] = fromSlot;
+                        -- end
 
-                        Inventory:update(moveData.from.slot);
-                        Inventory:update(moveData.to.slot);
-                        Storage:update(moveData.from.slot);
-                        Storage:update(moveData.to.slot);
-                        -- inventory.moveItem|{"from":{"slot":0,"type":1,"amount":3},"to":{"slot":1,"type":1}}
+                        -- Inventory:update(moveData.from.slot);
+                        -- Inventory:update(moveData.to.slot);
+                        -- Storage:update(moveData.from.slot);
+                        -- Storage:update(moveData.to.slot);
+                        -- -- inventory.moveItem|{"from":{"slot":0,"type":1,"amount":3},"to":{"slot":1,"type":1}}
                         -- Inventory:handleItemMove(moveData.from.slot, moveData.to.slot);
                         
                         return false;

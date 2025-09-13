@@ -19,3 +19,37 @@ INVENTORY_RESTORE_DIALOG_TITLE = {
     -- [INVENTORY_RESTORE_STATE.WAIT_FOR_INVENTORY_SECOND_CLICK] = '',
     -- [INVENTORY_RESTORE_STATE.CLOSE_ANY_DIALOG] = ''
 };
+
+---@enum INTERFACE_TYPE
+INTERFACE_TYPE = {
+    INVENTORY = 'inventory',
+    HOTEL = 'hotel',
+    STORAGE = 'storage'
+};
+
+---@type table<string, INTERFACE_TYPE>
+INTERFACE_TYPE_REVERSED = (function()
+    local l = {};
+    for k, v in pairs(INTERFACE_TYPE) do
+        l[v] = k;
+    end
+    return l;
+end)();
+
+INTERFACE_ACTION_TYPE = {
+    [INTERFACE_TYPE.INVENTORY] = 1,
+    [INTERFACE_TYPE.HOTEL] = 34,
+    [INTERFACE_TYPE.STORAGE] = 25
+};
+
+INTERFACE_MAX_SLOTS = {
+    [INTERFACE_TYPE.INVENTORY] = 100,
+    [INTERFACE_TYPE.HOTEL] = 179,
+    [INTERFACE_TYPE.STORAGE] = 179
+};
+
+INTERFACE_TAB_NAME = {
+    [INTERFACE_TYPE.INVENTORY] = u8'Инвентарь',
+    [INTERFACE_TYPE.HOTEL] = u8'Отель',
+    [INTERFACE_TYPE.STORAGE] = u8'Склад'
+};

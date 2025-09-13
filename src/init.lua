@@ -11,13 +11,15 @@ Requests = require('requests');
 
 SampEvents = require('samp.events');
 FaIcons = require('fAwesome6');
+
+require('constants');
+require('slot-interface');
 require('net');
 require('moonloader');
-require('constants');
 require('config');
 require('hook');
 require('inventory');
-require('storage');
+-- require('storage');
 require('utils.bitstream');
 require('utils.helpers');
 require('ui.main');
@@ -25,10 +27,11 @@ require('ui.main');
 
 -- error('')
 function init()
+    SlotInterface:init();
     Net:init();
     Hook:init();
-    Inventory:init();
-    Storage:init();
+    -- Inventory:init();
+    -- Storage:init();
     UI:init();
 end
 

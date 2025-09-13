@@ -49,6 +49,9 @@ Config = {
     },
     storage = {
         slots = {}
+    },
+    hotel = {
+        slots = {}
     }
 }
 

@@ -1,30 +1,22 @@
 
 
 
-function UI.drawSlotItem(index, key, slot, item)
-    local function updateSlot(slot)
-        if (key == 'inventory') then
-            Inventory:update(slot);
-        elseif (key == 'storage') then
-            Storage:update(slot);
-        end
-        Msg('Update', key, slot);
-    end
-    local cfg = Config[key];
+function UI.drawSlotItem(index, interface, slot, item)
+    local cfg = Config[interface];
     local size = imgui.GetWindowSize();
     if (imgui.BeginChild('item-' .. index, imgui.ImVec2(size.x - 20, 5 + 24 + 5 + 25 + 5), true, imgui.WindowFlags.NoScrollWithMouse + imgui.WindowFlags.NoScrollbar)) then
         imgui.SetCursorPos(imgui.ImVec2(5, 5));
         if (UI.Components.ClickableText(FaIcons('EYE') .. '##' .. slot, TEXT_BUTTON_COLOR[cfg.slots[slot].__enabled and 'green' or 'red'].default, nil, imgui.ImVec2(24, 24))) then
             cfg.slots[slot].__enabled = not cfg.slots[slot].__enabled;
-            updateSlot(slot);
+            SlotInterface:update(interface, slot);
         end
         imgui.SameLine();
-        imgui.Text(('%s [%d]'):format(item.__info.item_name, item.item[0]));
+        imgui.Text(('%s [%d]'):format(item.__info.name, item.item[0]));
         
         imgui.SetCursorPos(imgui.ImVec2(5, 5 + 24 + 5));
         if (UI.Components.ClickableText(FaIcons('TRASH') .. '##' .. slot, TEXT_BUTTON_COLOR.red.default, nil, imgui.ImVec2(24, 24))) then
             cfg.slots[slot] = nil;
-            updateSlot(slot);
+            SlotInterface:update(interface, slot);
         end
         imgui.SameLine();
         imgui.TextDisabled(FaIcons('WINDOW_RESTORE'));
@@ -42,8 +34,8 @@ function UI.drawSlotItem(index, key, slot, item)
                 cfg.slots[slot] = nil;
                 return;
             end
-            updateSlot(oldSlot);
-            updateSlot(newSlot);
+            SlotInterface:update(interface, oldSlot);
+            SlotInterface:update(interface, newSlot);
         end
         UI.Components.Hint('hint-inventory-item-slot-' .. index, u8'Слот');
         imgui.SameLine();
@@ -68,7 +60,7 @@ function UI.drawSlotItem(index, key, slot, item)
             local colorFloat = item.__color;
             local colorArgb = JoinArgb(colorFloat[3] * 255, colorFloat[1] * 255, colorFloat[2] * 255, colorFloat[3] * 255);
             item.background[0] = colorArgb == 0xFFffffff and 0 or colorArgb;
-            updateSlot(item.slot[0]);
+            SlotInterface:update(interface, item.slot[0]);
         end
         imgui.SameLine();
         

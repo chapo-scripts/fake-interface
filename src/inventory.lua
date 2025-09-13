@@ -21,34 +21,6 @@ function Inventory.restoreData.setState(state)
     Msg(('Restoring interface (%d/%d)'):format(oldState, state));
 end
 
----@param id number
-function Inventory:setSkin(id)
-    --[[
-        window.executeEvent('event.inventory.playerInventory', `[{"action":2,"data":{"type":22,"items":[{"slot":0,"item":269,"amount":1,"unic_id":0,"unic_id_2":0,"unic_id_3":0,"text":"ID:78","enchant":0,"available":1,"blackout":0,"time":0}]}}]`);
-    ]]
-    --{"action":2,"data":{"type":22,"items":[{"slot":0,"item":269,"amount":1,"unic_id":0,"unic_id_2":0,"unic_id_3":0,"text":"ID:78","enchant":0,"available":1,"blackout":0,"time":0}]}}
-    local data = {
-        action = 2,
-        data = {
-            type = 22,
-            items = {
-                slot = 0,
-                item = id,
-                amount = 1,
-                unic_id = 0,
-                uniq_id_2 = 0,
-                uniq_id_3 = 0,
-                text = 'ID: ' .. tostring(id),
-                enchant = 0,
-                available = 1,
-                blackout = 0,
-                time = 0
-            }
-        }
-    };
-    CEF:emulate(([[window.executeEvent('event.inventory.playerInventory', `[%s]`);]]):format(encodeJson(data)), false);
-end
-
 function Inventory:clearSlot(slot)
     CEF:emulate(([[window.executeEvent('event.inventory.playerInventory', `[{"action":2,"data":{"type":1,"items":[{"slot":%d}]}}]`);]]):format(slot), false);
     self.slots[slot] = nil;
@@ -69,7 +41,7 @@ local ITEM_DATA_TYPE_SET_STORAGE = 25;
 
 ---@param items Item[]
 function Inventory:setItems(items, type)
-     local data = {
+    local data = {
         action = 2,
         data = {
             type = type or 1,

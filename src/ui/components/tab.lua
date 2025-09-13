@@ -1,19 +1,21 @@
 local TABS = {
-    { name = u8'Инвентарь', key = 'inventory' },
-    { name = u8'Склад', key = 'storage' }
+    { name = FaIcons('SUITCASE') .. u8' Инвентарь', interface = INTERFACE_TYPE.INVENTORY },
+    { name = FaIcons('WAREHOUSE') .. u8' Склад', interface = INTERFACE_TYPE.STORAGE },
+    { name = FaIcons('HOTEL') .. u8' Отель', interface = INTERFACE_TYPE.HOTEL }
 };
 
-local function drawTab(name, key)
-     local function updateSlot(slot)
-        if (key == 'inventory') then
-            Inventory:update(slot);
-        elseif (key == 'storage') then
-            Storage:update(slot);
-        end
-        Msg('Update', key, slot);
-    end
+local function drawTab(name, interface)
+    --  local function updateSlot(slot)
+    --     if (key == 'inventory') then
+    --         Inventory:update(slot);
+    --     elseif (key == 'storage') then
+    --         Storage:update(slot);
+    --     end
+    --     Msg('Update', key, slot);
+    -- end
     local size = imgui.GetWindowSize();
-    local cfg = Config[key];
+    local cfg = Config[interface];
+    -- print('INT CFG', interface, cfg)
     if (imgui.BeginTabItem(name)) then
         if (imgui.Button(FaIcons('PLUS'), imgui.ImVec2(24, 24))) then
             local itemInfo = Net:getItemInfo(UI.addItem.id[0]);
@@ -40,7 +42,7 @@ local function drawTab(name, key)
                     __info = itemInfo,
                     __color = imgui.new.float[4](1, 1, 1, 0)
                 };
-                updateSlot(UI.addItem.slot[0]);
+                SlotInterface:update(interface, UI.addItem.slot[0]);
             else
                 Msg('ID не может быть меньше нуля!', UI.addItem.id[0], tostring(UI.addItem.id[0] < 0));
             end
@@ -53,9 +55,11 @@ local function drawTab(name, key)
         imgui.InputInt('##id', UI.addItem.id, -1);
         UI.Components.Hint('hint-inventory-add_id-item-', u8'Серверный ID предмета');
         imgui.SameLine();
-        if (UI.Components.ClickableText(FaIcons('LINK'), imgui.ImVec4(0, 0.58, 1, 1))) then
-            os.execute('start "https://items.shinoa.tech/"');
+        if (UI.Components.ClickableText(FaIcons('LIST'), imgui.ImVec4(0, 0.58, 1, 1))) then
+            -- os.execute('start "https://items.shinoa.tech/"');
+            imgui.OpenPopup('items-list');
         end
+        UI.Popups.ItemsList();
         UI.Components.Hint('hint-inventory-add_items_url-item-', u8'Список предметов');
         imgui.SameLine(nil, 25);
         imgui.TextDisabled(FaIcons('WINDOW_RESTORE'));
@@ -92,7 +96,7 @@ local function drawTab(name, key)
             imgui.PushItemWidth(75);
             for slot, item in pairs(cfg.slots) do
                 index = index + 1;
-                UI.drawSlotItem(index, key, slot, item);
+                UI.drawSlotItem(index, interface, slot, item);
             end
             imgui.PopItemWidth();
         end
@@ -103,6 +107,6 @@ end
 
 return function()
     for _, tabData in ipairs(TABS) do
-        drawTab(tabData.name, tabData.key);
+        drawTab(tabData.name, tabData.interface);
     end
 end
