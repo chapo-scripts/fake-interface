@@ -53,6 +53,10 @@ function SlotInterface:clearsSlots(interface, min, max)
     end
 end
 
+function SlotInterface:reloadWindow()
+    CEF:emulate(("(() => {%s})()"):format('window.location.reload()'), false);
+end
+
 ---@param interface INTERFACE_TYPE
 function SlotInterface:clearAll(interface)
     for i = 0, INTERFACE_MAX_SLOTS[interface] do
@@ -62,6 +66,7 @@ end
 
 ---@param interface INTERFACE_TYPE
 function SlotInterface:addItemsFromConfig(interface)
+    DebugMsg('Adding items from config to', interface);
     local items = {};
     for slot, configItem in pairs(Config[interface].slots) do
         if (configItem.__enabled) then
@@ -69,6 +74,17 @@ function SlotInterface:addItemsFromConfig(interface)
         end
     end
     self:setItems(interface, items);
+
+    if (interface == INTERFACE_TYPE.HOUSE) then
+        self:setHouseWardrobeMoney(tonumber(ffi.string(Config[interface].money)) or -1);
+    end
+end
+
+---@param amount number
+function SlotInterface:setHouseWardrobeMoney(amount)
+    DebugMsg('wardrobe, money set to', amount);
+    --window.executeEvent('event.inventory.playerInventory', `[{"action":1,"data":{"type":5,"money":228}}]`);
+    CEF:emulate(([[window.executeEvent('event.inventory.playerInventory', `[{"action":1,"data":{"type":5,"money":%d}}]`);]]):format(amount), false);
 end
 
 function SlotInterface:handleItemMove(from, to)

@@ -3,7 +3,13 @@ function Msg(...)
 end
 
 function DebugMsg(...)
+   if (not DEV) then return end
    return Msg('[DEBUG]', ...);
+end
+
+function dprint(...)
+   if (not DEV) then return end
+   return print('[DEBUG]', ...);
 end
 
 function debug.log(...)

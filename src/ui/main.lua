@@ -1,12 +1,13 @@
 UI = {
-    menu = imgui.new.bool(true),
+    menu = imgui.new.bool(DEV),
     addItem = {
         id = imgui.new.int(6313),
         slot = imgui.new.int(0)
     },
     Popups = {
         Config = require('ui.popups.config'),
-        ItemsList = require('ui.popups.items-list')
+        ItemsList = require('ui.popups.items-list'),
+        PacketRecorderSave = require('ui.popups.packet-recorder-save')
     },
     Components = {
         ClickableText = require('ui.components.clickable-text'),
@@ -39,7 +40,7 @@ function UI:init()
     end);
     sampRegisterChatCommand('fakecef', function()
         self.menu[0] = not self.menu[0];
-        UI.resetIO();
+        -- UI.resetIO();
     end);
     
     imgui.OnInitialize(function()
@@ -56,9 +57,24 @@ function UI:init()
         style.WindowPadding = imgui.ImVec2(10, 10);
         style.FrameRounding = 5;
         style.FramePadding = imgui.ImVec2(3, 5);
+        style.ChildRounding = 5;
+        style.WindowTitleAlign = imgui.ImVec2(0.5, 0.5);
 
         local colors = style.Colors;
-        
+        colors[imgui.Col.WindowBg] = imgui.ImVec4(0.09, 0.09, 0.09, 1);
+        colors[imgui.Col.ChildBg] = imgui.ImVec4(0.09, 0.09, 0.09, 1);
+        colors[imgui.Col.FrameBg] = imgui.ImVec4(0.15, 0.15, 0.15, 1)
+        colors[imgui.Col.Border] = imgui.ImVec4(0, 0, 0, 0);
+        colors[imgui.Col.Header] = colors[imgui.Col.FrameBg];
+        colors[imgui.Col.Tab] = colors[imgui.Col.FrameBg];
+        colors[imgui.Col.Button] = imgui.ImVec4(0.51, 0.06, 0.8, 1);
+        colors[imgui.Col.ButtonHovered] = imgui.ImVec4(0.51, 0.06, 0.8, 0.7);
+        colors[imgui.Col.ButtonActive] = imgui.ImVec4(0.51, 0.06, 0.8, 0.3);
+        colors[imgui.Col.TabActive] = colors[imgui.Col.Button];
+        colors[imgui.Col.TabHovered] = colors[imgui.Col.ButtonHovered]
+
+        colors[imgui.Col.TitleBg] = colors[imgui.Col.Button];
+        colors[imgui.Col.TitleBgActive] = colors[imgui.Col.TitleBg];
     end);
     imgui.OnFrame(
         function() return UI.menu[0] end,

@@ -1,77 +1,65 @@
 CFG = {
     initialized = false
 };
----@class ConfigItem
----@field slot ImInt
----@field item ImInt
----@field amount ImInt
----@field text ImBuffer
----@field background ImInt
----@field enchant ImInt
----@field color ImInt
----@field strength ImInt
----@field available ImInt
----@field blackout ImInt
----@field time ImInt
-
----@class Config
----@field name string
----@field inventory {slots: table<number, ConfigItem>}
----@field house {slots: table<number, ConfigItem>}
----@field hotel {slots: table<number, ConfigItem>}
----@field trunk {slots: table<number, ConfigItem>}
-
----@class GlobalConfig
----@field configs table<string, Config>
----@field activeConfig string
----@field enabled boolean
 
 ---@type GlobalConfig
 GlobalConfig = {
-    enabled = true,
-    activeConfig = 'default',
+    enabled = false,
+    activeConfig = {
+        name = '',
+        inventory = {
+        enabled = true,
+        slots = {}
+        },
+        storage = {
+            slots = {}
+        },
+        hotel = {
+            slots = {}
+        },
+        house = {
+            slots = {},
+            money = imgui.new.char[32]('0')
+        },
+        trunk = {
+            slots = {}
+        }
+    },
     configs = {
         {
             name = 'default',
             inventory = { slots = {} },
             storage = { slots = {} },
-            house = { slots = {} },
+            house = { slots = {}, money = imgui.new.char[32]('0') },
             hotel = { slots = {} },
             trunk = { slots = {} }
         }
-    }
+    },
+    packetRecords = {},
+    packetRecorderSaveIntervals = false
 };
 
-Config = {
-    inventory = {
-        enabled = true,
-        slots = {}
-    },
-    storage = {
-        slots = {}
-    },
-    hotel = {
-        slots = {}
-    }
-}
+Config = {};
 
----@param name string
----@return Config | nil cfg
-function CFG:findConfig(name)
-    for _, cfg in ipairs(GlobalConfig) do
-        if (cfg.name == name) then
-            return cfg;
-        end
-    end
-    return nil;
+function CFG:saveTo(index)
+    local originalName = GlobalConfig.configs[index].name;
+    GlobalConfig.configs[index] = table.copy(Config);
+    GlobalConfig.configs[index].name = originalName;
+    Msg(('Текущие настройки сохранены в профиль #%d "%s"'):format(index, u8:decode(originalName)));
+end
+
+function CFG:load(index)
+    print('Loading', table.toString(GlobalConfig.configs[index]));
+    Config = table.copy(GlobalConfig.configs[index]);
+    Msg(('Загружены настройки из профиля #%d "%s"'):format(index, u8:decode(GlobalConfig.configs[index].name)));
 end
 
 function CFG:init()
-    -- load using CarbJSON
-    local cfg = self:findConfig(GlobalConfig.activeConfig);
-    if (not cfg) then
-        Msg(('Ошибка, не удалось загрузить конфиг "%s": конфиг не найден. Конфиг был изменен на "default".'):format(GlobalConfig.activeConfig));
-        GlobalConfig.activeConfig = 'default';
-    end
-    Config = cfg;
+    CarbJson.load(getGameDirectory() .. '\\moonloader\\config\\fakecef.json', GlobalConfig);
+    Config = table.copy(GlobalConfig.activeConfig);
+    self.initialized = true;
+end
+
+function CFG:save()
+    GlobalConfig();
 end

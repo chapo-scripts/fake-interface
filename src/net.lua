@@ -69,9 +69,8 @@ function Net:init()
     if (status) then
         self.items = list;
         for k, v in pairs(self.items) do
-            print(k, v)
+            dprint(k, v)
             table.insert(self.sortedItems, v);
-            
         end
         table.sort(self.sortedItems, function(a, b)
             return a.id < b.id;

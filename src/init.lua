@@ -1,4 +1,5 @@
 ---@diagnostic disable:lowercase-global
+DEV = LUBU_BUNDLED == nil; ---@diagnostic disable-line
 
 ffi = require('ffi');
 imgui = require('mimgui');
@@ -8,6 +9,7 @@ u8 = encoding.UTF8;
 
 Effil = require('effil');
 Requests = require('requests');
+CarbJson = require('carbjsonconfig');
 
 SampEvents = require('samp.events');
 FaIcons = require('fAwesome6');
@@ -18,8 +20,9 @@ require('net');
 require('moonloader');
 require('config');
 require('hook');
-require('inventory');
+-- require('inventory');
 -- require('storage');
+require('packet-recorder');
 require('utils.bitstream');
 require('utils.helpers');
 require('ui.main');
@@ -27,12 +30,14 @@ require('ui.main');
 
 -- error('')
 function init()
+    CFG:init();
     SlotInterface:init();
     Net:init();
     Hook:init();
     -- Inventory:init();
     -- Storage:init();
     UI:init();
+    PacketRecorder:init();
 end
 
 function main()

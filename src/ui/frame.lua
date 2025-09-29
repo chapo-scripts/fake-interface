@@ -4,24 +4,33 @@
 function UI.drawSlotItem(index, interface, slot, item)
     local cfg = Config[interface];
     local size = imgui.GetWindowSize();
-    if (imgui.BeginChild('item-' .. index, imgui.ImVec2(size.x - 20, 5 + 24 + 5 + 25 + 5), true, imgui.WindowFlags.NoScrollWithMouse + imgui.WindowFlags.NoScrollbar)) then
+    if (not cfg.slots[slot]) then
+        return;
+    end
+    local styleColors = imgui.GetStyle().Colors;
+    imgui.PushStyleColor(imgui.Col.ChildBg, imgui.GetStyle().Colors[imgui.Col.FrameBg]);
+    imgui.PushStyleColor(imgui.Col.FrameBg, imgui.GetStyle().Colors[imgui.Col.WindowBg]);
+    imgui.PushStyleColor(imgui.Col.FrameBgActive, imgui.GetStyle().Colors[imgui.Col.WindowBg]);
+    imgui.PushStyleColor(imgui.Col.FrameBgHovered, imgui.GetStyle().Colors[imgui.Col.WindowBg]);
+    if (imgui.BeginChild('item-' .. index, imgui.ImVec2(size.x - 20, 5 + 24 + 5), true, imgui.WindowFlags.NoScrollWithMouse + imgui.WindowFlags.NoScrollbar)) then
         imgui.SetCursorPos(imgui.ImVec2(5, 5));
         if (UI.Components.ClickableText(FaIcons('EYE') .. '##' .. slot, TEXT_BUTTON_COLOR[cfg.slots[slot].__enabled and 'green' or 'red'].default, nil, imgui.ImVec2(24, 24))) then
             cfg.slots[slot].__enabled = not cfg.slots[slot].__enabled;
             SlotInterface:update(interface, slot);
         end
         imgui.SameLine();
-        imgui.Text(('%s [%d]'):format(item.__info.name, item.item[0]));
         
-        imgui.SetCursorPos(imgui.ImVec2(5, 5 + 24 + 5));
+        -- imgui.SetCursorPos(imgui.ImVec2(5, 5 + 24 + 5));
         if (UI.Components.ClickableText(FaIcons('TRASH') .. '##' .. slot, TEXT_BUTTON_COLOR.red.default, nil, imgui.ImVec2(24, 24))) then
             cfg.slots[slot] = nil;
             SlotInterface:update(interface, slot);
         end
         imgui.SameLine();
+        imgui.Text(('%s [%d]'):format(item.__info.name, item.item[0]));
+        imgui.SameLine();
         imgui.TextDisabled(FaIcons('WINDOW_RESTORE'));
         imgui.SameLine();
-        imgui.PushItemWidth(50);
+        imgui.PushItemWidth(100);
         local oldSlot = item.slot[0];
         if (imgui.InputInt('##inventory-item-slot-' .. index, item.slot, -1)) then
             local newSlot = item.slot[0];
@@ -38,15 +47,11 @@ function UI.drawSlotItem(index, interface, slot, item)
             SlotInterface:update(interface, newSlot);
         end
         UI.Components.Hint('hint-inventory-item-slot-' .. index, u8'Слот');
-        imgui.SameLine();
-        imgui.TextDisabled(FaIcons('STAR'));
-        imgui.SameLine();
-        local enchantChanged = imgui.ComboStr('##inventory-item-enchant-' .. index, item.enchant, UI.enchantsListStr, 5);
-        UI.Components.Hint('hint-inventory-item-enchant-' .. index, u8'Заточка');
+        
         imgui.SameLine();
         imgui.TextDisabled(FaIcons('TAG'));
         imgui.SameLine();
-        local amountChanged = imgui.InputTextWithHint('##inventory-item-text-' .. index, u8'Текст', item.text, ffi.sizeof(item.text));
+        local textChanged = imgui.InputTextWithHint('##inventory-item-text-' .. index, u8'Текст', item.text, ffi.sizeof(item.text));
         UI.Components.Hint('hint-inventory-item-amount-' .. index, u8'Текст предмета (заточка, количество или время)');
         imgui.PopItemWidth();
         imgui.SameLine();
@@ -56,7 +61,7 @@ function UI.drawSlotItem(index, interface, slot, item)
             item.background[0] = 0;
             colorChanged = true;
         end
-        if (enchantChanged or amountChanged or colorChanged) then
+        if (textChanged or colorChanged) then
             local colorFloat = item.__color;
             local colorArgb = JoinArgb(colorFloat[3] * 255, colorFloat[1] * 255, colorFloat[2] * 255, colorFloat[3] * 255);
             item.background[0] = colorArgb == 0xFFffffff and 0 or colorArgb;
@@ -71,14 +76,15 @@ function UI.drawSlotItem(index, interface, slot, item)
         -- UI.Components.Hint('hint-inventory-item-other-' .. index, u8'Прочее');
     end
     imgui.EndChild();
+    imgui.PopStyleColor(4);
 end
 
 return function(frame)
     local resX, resY = getScreenResolution()
-    local sizeX, sizeY = 400, 400;
+    local sizeX, sizeY = 600, 400;
     imgui.SetNextWindowPos(imgui.ImVec2(resX / 2, resY / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
     imgui.SetNextWindowSize(imgui.ImVec2(sizeX, sizeY), imgui.Cond.FirstUseEver)
-    if imgui.Begin('FakeCEF', UI.menu) then
+    if imgui.Begin('FakeCEF', UI.menu, imgui.WindowFlags.NoCollapse) then
         local size = imgui.GetWindowSize();
         local style = imgui.GetStyle();
 

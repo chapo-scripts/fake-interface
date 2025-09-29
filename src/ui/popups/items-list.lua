@@ -48,7 +48,8 @@ return function()
                     local item = list[itemIndex];
                     if (item) then
                         if (imgui.Button(('#%d. %s [ID: %d]'):format(itemIndex, item.name, item.id), imgui.ImVec2(size.x - 40, 24))) then
-
+                            UI.addItem.id[0] = item.id;
+                            imgui.CloseCurrentPopup();
                         end
                         if (imgui.IsItemHovered()) then
                             imgui.BeginTooltip();
@@ -59,14 +60,14 @@ return function()
                                 imgui.Text(u8'Загрузка изображения...');
                             end
                             imgui.EndTooltip();
-                        end         
+                        end
                     end
                 end
             end
             imgui.PopStyleVar();
         end
         imgui.EndChild();
-        if (imgui.Button(FaIcons('X') .. u8' Закрыть##items-list-close', imgui.ImVec2(size.x - 10, 24))) then
+        if (imgui.Button(FaIcons('XMARK') .. u8' Закрыть##items-list-close', imgui.ImVec2(size.x - 10, 24))) then
             imgui.CloseCurrentPopup();
         end
 
