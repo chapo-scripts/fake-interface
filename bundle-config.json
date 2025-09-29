@@ -1,0 +1,30 @@
+{
+    "main": "src/init.lua",
+    "out": "dist/fake-interface.lua",
+    "modules": {
+        "arizona": "src\\arizona.lua",
+        "config": "src\\config.lua",
+        "constants": "src\\constants.lua",
+        "hook": "src\\hook.lua",
+        "house": "src\\house.lua",
+        "init": "src\\init.lua",
+        "net": "src\\net.lua",
+        "packet-recorder": "src\\packet-recorder.lua",
+        "slot-interface": "src\\slot-interface.lua",
+        "types": "src\\types.lua",
+        "ui.components.clickable-text": "src\\ui\\components\\clickable-text.lua",
+        "ui.components.clickable-text-dl": "src\\ui\\components\\clickable-text-dl.lua",
+        "ui.components.hint": "src\\ui\\components\\hint.lua",
+        "ui.components.tab": "src\\ui\\components\\tab.lua",
+        "ui.frame": "src\\ui\\frame.lua",
+        "ui.main": "src\\ui\\main.lua",
+        "ui.popups.config": "src\\ui\\popups\\config.lua",
+        "ui.popups.items-list": "src\\ui\\popups\\items-list.lua",
+        "ui.popups.packet-recorder-save": "src\\ui\\popups\\packet-recorder-save.lua",
+        "utils.bitstream": "src\\utils\\bitstream.lua",
+        "utils.helpers": "src\\utils\\helpers.lua"
+    },
+    "const": {
+        "VERSION": "0.1"
+    }
+}

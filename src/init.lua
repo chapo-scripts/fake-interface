@@ -20,22 +20,16 @@ require('net');
 require('moonloader');
 require('config');
 require('hook');
--- require('inventory');
--- require('storage');
 require('packet-recorder');
 require('utils.bitstream');
 require('utils.helpers');
 require('ui.main');
 
-
--- error('')
 function init()
     CFG:init();
     SlotInterface:init();
     Net:init();
     Hook:init();
-    -- Inventory:init();
-    -- Storage:init();
     UI:init();
     PacketRecorder:init();
 end
@@ -45,7 +39,3 @@ function main()
     init();
     wait(-1);
 end
-
---[[
-    window.executeEvent('event.inventory.playerInventory', `[{"action":1,"data":{"skin":{"model":78,"background":-1},"buttons":1}}]`);
-]]

@@ -16,7 +16,8 @@ UI = {
         Tab = require('ui.components.tab')
     },
     enchantsList = { u8'Нет' },
-    enchantsListStr = '\0'
+    enchantsListStr = '\0',
+    resetIoRequired = false
 };
 
 TEXT_BUTTON_COLOR = {
@@ -41,6 +42,7 @@ function UI:init()
     sampRegisterChatCommand('fakecef', function()
         self.menu[0] = not self.menu[0];
         -- UI.resetIO();
+        UI.resetIoRequired = true;
     end);
     
     imgui.OnInitialize(function()
@@ -79,6 +81,10 @@ function UI:init()
     imgui.OnFrame(
         function() return UI.menu[0] end,
         function(frame)
+            if (UI.resetIoRequired) then
+                UI.resetIO();
+                UI.resetIoRequired = false;
+            end
             mainFrame(frame);
         end
     );
